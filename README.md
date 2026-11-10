@@ -27,6 +27,7 @@ Run from the repository root, in this order:
 | `R/07-smote.R` | Sensitivity analysis S4 (SMOTE) | `results/smote-predictions.rds` |
 | `R/08-logistic.R` | Crude and adjusted odds ratios (Rubin's rules) | `results/tables/table4-logistic.csv` |
 | `R/09-supplement.R` | LaTeX tables of Additional file 1 | `results/supplement-tables/` |
+| `R/10-centre-only.R` | Sensitivity analysis S8: the centre as the only predictor | `results/tables/` |
 
 ```sh
 Rscript R/00-sample-size.R
@@ -41,6 +42,7 @@ Rscript R/06-centre-profile.R
 OMP_NUM_THREADS=1 Rscript R/07-smote.R
 Rscript R/08-logistic.R
 Rscript R/09-supplement.R
+Rscript R/10-centre-only.R
 ```
 
 `R/utils.R` holds the predictor list, labels, learner grids, and helpers, and
