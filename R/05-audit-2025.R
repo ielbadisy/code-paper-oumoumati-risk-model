@@ -70,6 +70,30 @@ write.csv(base, "results/tables/audit-label-baseline.csv", row.names = FALSE)
 
 # ---- 4. up-sampling: predicted risk vs observed proportion -------------------
 
+# This audit was run with the first version of the analysis (2026-10-07): the
+# 22 prespecified predictors and single kNN imputation (missknn). Both are
+# defined here so that the audit reproduces the reported values.
+audit_binary <- c("rural", "consanguinity", "wanted_pregnancy", "prior_abortion",
+                  "prior_adverse_outcome", "prior_caesarean", "family_diabetes",
+                  "family_hypertension", "personal_medical_history",
+                  "rhesus_negative")
+predictors <- c("age", "gravidity", "parity", "bmi", "booking_ga_weeks",
+                "sbp", "dbp", "hb_gdl", "platelets_k", audit_binary, "education")
+round_binaries <- function(x, vars) {
+  for (v in intersect(vars, names(x))) x[[v]] <- as.numeric(x[[v]] >= 0.5)
+  x
+}
+# impute the training set, then the test set with the imputed training rows as
+# donors; the outcome never enters the imputation
+impute_split <- function(train, test, vars, seed) {
+  knn <- function(x) as.data.frame(missknn::missknn(x, k = 5, seed = seed,
+                                                     parallel_cores = 1))
+  tr <- knn(train[vars])
+  stacked <- rbind(tr, test[vars])
+  te <- knn(stacked)[(nrow(tr) + 1):nrow(stacked), , drop = FALSE]
+  list(train = round_binaries(tr, audit_binary), test = round_binaries(te, audit_binary))
+}
+
 # Logistic regression on the corrected outcome, 5-fold CV, in-fold imputation;
 # with and without random up-sampling of events in the training folds.
 folds <- stratified_folds(d$y, 5, seed0)
