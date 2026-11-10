@@ -1,0 +1,11 @@
+# registry data are never committed
+data/*
+!data/README.md
+results/
+*.xlsm
+*.xlsx
+*.rds
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
