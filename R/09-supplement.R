@@ -63,7 +63,10 @@ tex(data.frame(Variable = mi$variable, `Missing, n` = mi$n_missing,
 
 cp <- rd("tableS-centre-profile.csv")
 names(cp) <- c("Item", "MOUAZZA", "SAFSAF", "Sidi Abderrazak", "Sidi Yahya El Gharb", "All")
-tex(cp, "center-profile.tex", c("l", rep("r", 5)), digits = 1)
+cp$Item <- sub("Booking GA", "Gestational age at booking", us(sub("Haemoglobin", "Hemoglobin", cp$Item)))
+md <- grepl("median", cp$Item)
+cp[-1] <- lapply(cp[-1], function(v) ifelse(md, sprintf("%.1f", v), sprintf("%d", as.integer(round(v)))))
+tex(cp, "center-profile.tex", c("l", rep("r", 5)))
 
 ss <- rd("sample-size.csv")
 ss$value <- ifelse(ss$value >= 100, format(ss$value, big.mark = ","), as.character(ss$value))
